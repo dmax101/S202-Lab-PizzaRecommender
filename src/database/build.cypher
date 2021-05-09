@@ -1,11 +1,9 @@
-MATCH (n) DETACH DELETE n
+MATCH (n) DETACH DELETE n;
 
-// Creating Category nodes
 CREATE (c:Category{name:'doce'});
 CREATE (c:Category{name:'salgada'});
 CREATE (c:Category{name:'vegana'});
 
-// Creating Pizza nodes
 CREATE (p:Pizza{name:'alcachofra',price: 51.23});
 CREATE (p:Pizza{name:'atum',price: 69.15});
 CREATE (p:Pizza{name:'atum com muçarela',price: 49.58});
@@ -24,7 +22,6 @@ CREATE (p:Pizza{name:'chocolate',price: 55.57});
 CREATE (p:Pizza{name:'cinco queijos',price: 49.00});
 CREATE (p:Pizza{name:'escarola',price: 50.64});
 
-// Creating Ingredients nodes
 CREATE (a1:Ingredient{name:'alcachofra'});
 CREATE (a2:Ingredient{name:'atum'});
 CREATE (a3:Ingredient{name:'atum sólido'});
@@ -67,7 +64,6 @@ CREATE (a39:Ingredient{name:'tomate'});
 CREATE (a40:Ingredient{name:'tomate cereja'});
 CREATE (a41:Ingredient{name:'tomate seco'});
 
-// Creating Category-Pizza relationship
 MATCH (c:Category{name:'salgada'}),(p:Pizza{name:'alcachofra'}) CREATE (c)-[:HAS]->(p);
 MATCH (c:Category{name:'salgada'}),(p:Pizza{name:'atum'}) CREATE (c)-[:HAS]->(p);
 MATCH (c:Category{name:'salgada'}),(p:Pizza{name:'atum com muçarela'}) CREATE (c)-[:HAS]->(p);
@@ -86,7 +82,6 @@ MATCH (c:Category{name:'doce'}),(p:Pizza{name:'chocolate'}) CREATE (c)-[:HAS]->(
 MATCH (c:Category{name:'salgada'}),(p:Pizza{name:'cinco queijos'}) CREATE (c)-[:HAS]->(p);
 MATCH (c:Category{name:'vegana'}),(p:Pizza{name:'escarola'}) CREATE (c)-[:HAS]->(p);
 
-// Creating Pizza-Ingredients relationship
 MATCH (p:Pizza{name:'alcachofra'}),(a1:Ingredient{name:'alcachofra'}) CREATE (p)-[:CONTAIN]->(a1);
 MATCH (p:Pizza{name:'alcachofra'}),(a4:Ingredient{name:'azeitona fatiada'}) CREATE (p)-[:CONTAIN]->(a4);
 MATCH (p:Pizza{name:'alcachofra'}),(a29:Ingredient{name:'muçarela de búfala'}) CREATE (p)-[:CONTAIN]->(a29);
