@@ -2,6 +2,7 @@ from model.connector import Connector
 from controller.pizza_controller import PizzaController
 from utils.log import Log
 from view.menu import Menu
+import sys
 
 conf = {
         "host": "localhost",
@@ -57,5 +58,7 @@ def main():
     cn.close()
 
 if __name__ == '__main__':
-    setup()
+    for arg in sys.argv:
+        if arg == "setup":
+            setup()
     main()

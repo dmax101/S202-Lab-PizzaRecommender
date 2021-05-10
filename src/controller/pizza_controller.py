@@ -5,17 +5,29 @@ class PizzaController:
     def __init__(self, driver):
         self.driver = driver[0]
 
-    def db_engine(self, query):
+    def db_engine(self, query, list=False):
         with self.driver.session() as graphDB_Session:
             nodes = graphDB_Session.run(query)
-            # for node in nodes:
-            #     pp.pprint(node[0])
-            return nodes
-
-    def db_engine_list(self, query):
-        nodes = self.db_engine(query)
-        for node in nodes:
-            pp.pprint(node[0])
+        
+            if list == True:
+                for node in nodes:
+                    if len(node) == 1:
+                        name = "{}".format(node[0])
+                        print(name)
+                    else:
+                        name = "{}".format(node[0])
+                        price = "{}".format(node[1])
+                        print(name + ": R$ " + price)
+            else:
+                for node in nodes:
+                    if len(node['p']) == 1:
+                        name = node['p']['name']
+                        return [name]
+                    else:
+                        name = node['p']['name']
+                        price = float(node['p']['price'])
+                        
+                        return {"name": name, "price": price}
 
     def build_standard_database(self):
         # Using readline()
@@ -31,7 +43,7 @@ class PizzaController:
             query = line.strip()
 
             if not (query == ""):
-                self.db_engine_list(query)
+                self.db_engine(query, True)
 
             if not line:
                 break
@@ -40,11 +52,19 @@ class PizzaController:
 
         file.close()
 
+    def show_all_categories(self):
+
+        query = "MATCH (c:Category) RETURN c.name"
+
+        self.db_engine(query, True)
+
+        Log.info("Segura essas pizzas!","success","PizzaController")
+
     def show_all_pizzas(self):
 
-        query = "MATCH (p:Pizza) RETURN p.name"
+        query = "MATCH (p:Pizza) RETURN p.name, p.price"
 
-        self.db_engine_list(query)
+        self.db_engine(query, True)
 
         Log.info("Segura essas pizzas!","success","PizzaController")
 
@@ -52,20 +72,64 @@ class PizzaController:
 
         query = "MATCH (i:Ingredient) RETURN i.name"
 
-        self.db_engine_list(query)
+        self.db_engine(query, True)
 
         Log.info("Olha aí esses ingredientes!","success","PizzaController")
     
+    def show_pizzas_from_category(self, name):
+        query = "MATCH (n:Category{name: '" + name + "'})-[:HAS]->(p:Pizza) RETURN p.name"
+
+        self.db_engine(query, True)
+
     def show_pizza_ingredients(self, name):
-        query = "MATCH (p:Pizza{name:'{}'})-[:CONTAIN]->(i:Ingredient) RETURN i".format(name)
+        query = "MATCH (p:Pizza{name:'{" + name + "}'})-[:CONTAIN]->(i:Ingredient) RETURN i"
 
-        self.db_engine_list(query)
+        self.db_engine(query, True)
 
-    def create_new_pizza(self, name):
-        name = input("Insira o nome da Pizza: ")
+    def show_ingredients_pizza(self, name):
+        query = "MATCH (i:Ingredient{name:'{" + name + "}'})<-[:CONTAIN]-(p:Pizza) RETURN p"
 
-        print("selecione os ingredientes:")
-        while True:
-            self.show_all_ingredients()
+        self.db_engine(query, True)
 
+    def create_new_ingredient(self, name):
+        query = "MERGE (i:Ingredient{name: '" + name + "'})"
+        Log.info(str(query), "warning", "PizzaController")
 
+        print(self.db_engine(query))
+
+    def create_new_pizza(self, name, price, ingredients):
+        query = "MERGE (p:Pizza{name: '" + name + "', price: '" + price + "'})"
+
+        self.db_engine(query)
+
+        for ingredient in ingredients:
+            self.db_engine("MERGE (i:Ingredient{name: '" + ingredient + "'})")
+            self.db_engine("MATCH (p:Pizza{name: '" + name + "'}), (i:Ingredient{name: '" + ingredient + "'}) CREATE (p)-[:CONTAIN]->(i)")
+
+    def locate_pizza(self, name):
+        query = "MATCH (p:Pizza{name: '" + name + "'}) RETURN p"
+
+        response = self.db_engine(query)
+        
+        print(response)
+        
+        return response
+
+    def locate_ingredient(self, name):
+        query = "MATCH (i:Ingredient{name: '" + name + "'}) RETURN i"
+
+        response = self.db_engine(query)
+        
+        print(response)
+        
+        return response
+
+    def delete_ingredient(self, name):
+        query = "MATCH (i:Ingredient{name: '" + name + "'}) DETACH DELETE i"
+
+        print(self.db_engine(query))
+
+    def delete_pizza(self, name):
+        query = "MATCH (p:Pizza{name: '" + name + "'}) DETACH DELETE p"
+
+        print(self.db_engine(query))
