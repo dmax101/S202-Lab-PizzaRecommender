@@ -20,6 +20,10 @@ class PizzaController:
                         print(name + ": R$ " + price)
             else:
                 for node in nodes:
+                    if "SUM(p.price)" in node.data():
+                        sum_node = float(node["SUM(p.price)"])
+                        return sum_node
+                    
                     if len(node['p']) == 1:
                         name = node['p']['name']
                         return [name]
@@ -95,13 +99,17 @@ class PizzaController:
         query = "MERGE (i:Ingredient{name: '" + name + "'})"
         Log.info(str(query), "warning", "PizzaController")
 
-        print(self.db_engine(query))
+        self.db_engine(query)
 
-    def create_new_pizza(self, name, price, ingredients):
+    def create_new_pizza(self, name, price, category, ingredients):
         query = "MERGE (p:Pizza{name: '" + name + "', price: '" + price + "'})"
 
         self.db_engine(query)
 
+        query = "MATCH (p:Pizza{name: '" + name + "'}), (c:Category{name: '" + category + "'}) CREATE (c)-[:HAS]->(p)"
+
+        self.db_engine(query)
+        
         for ingredient in ingredients:
             self.db_engine("MERGE (i:Ingredient{name: '" + ingredient + "'})")
             self.db_engine("MATCH (p:Pizza{name: '" + name + "'}), (i:Ingredient{name: '" + ingredient + "'}) CREATE (p)-[:CONTAIN]->(i)")
@@ -127,9 +135,14 @@ class PizzaController:
     def delete_ingredient(self, name):
         query = "MATCH (i:Ingredient{name: '" + name + "'}) DETACH DELETE i"
 
-        print(self.db_engine(query))
+        self.db_engine(query)
 
     def delete_pizza(self, name):
         query = "MATCH (p:Pizza{name: '" + name + "'}) DETACH DELETE p"
 
-        print(self.db_engine(query))
+        self.db_engine(query)
+
+    def calculate_total(self, pizzas):
+        query = "MATCH (p:Pizza) WHERE p.name IN {} RETURN SUM(p.price)".format(pizzas)
+
+        return self.db_engine(query)

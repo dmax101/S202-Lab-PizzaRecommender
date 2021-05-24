@@ -1,4 +1,5 @@
 from utils.log import Log
+
 import pprint as pp
 
 class Menu:
@@ -18,9 +19,7 @@ class Menu:
             
             op = input("Escolha sua opção: ")
 
-            if op == "0": # Exit program
-                break
-            elif op == "1": # Menu Ingredients
+            if op == "1": # Menu Ingredients
                 print(50 * "-")
                 print("Ingredientes - Opções")
                 print(50 * "-")
@@ -34,19 +33,24 @@ class Menu:
                 op = input("Escolha sua opção: ")
                 if op == "1": # Adicionar novo Ingrediente
                     self.pc.create_new_ingredient(input("Insira o nome do novo ingrediente:\n"))
+                    input("Pressione enter para continuar...")
                 elif op == "2": # Apagar Ingrediente
                     self.pc.show_all_ingredients()
                     ingredient_name = input("Selecione a ingrediente que deseja apagar:\n")
                     
                     self.pc.delete_ingredient(ingredient_name)
+                    input("Pressione enter para continuar...")
                 elif op == "3": # Editar Ingrediente
+                    input("Pressione enter para continuar...")
                     pass
                 elif op == "4": # Listar todos os Ingredientes
                     self.pc.show_all_ingredients()
+                    input("Pressione enter para continuar...")
                 elif op == "5": # Busca de pizzas com os ingredientes
+                    input("Pressione enter para continuar...")
                     pass
                 elif op == "0": # Voltar
-                    break
+                    pass
             elif op == "2": # Menu Pizzas
                 print(50 * "-")
                 print("Pizzas - Opções")
@@ -62,6 +66,7 @@ class Menu:
                 if op == "1": # Adicionar nova Pizza
                     pizza_name = input("Insira o nome da nova Pizza:\n")
                     pizza_price = input("Insira o preço da nova Pizza:\n")
+                    pizza_category = input("Insira se é salgada, doce ou vegana:\n")
                     pizza_ingredients = []
 
                     while True:
@@ -76,26 +81,38 @@ class Menu:
                         else:
                             pizza_ingredients.append(ingredient)
 
-                    self.pc.create_new_pizza(pizza_name, pizza_price, set(pizza_ingredients))
+                    self.pc.create_new_pizza(pizza_name, pizza_price, pizza_category, set(pizza_ingredients))
+                    input("Pressione enter para continuar...")
                 elif op == "2": # Apagar Pizza
                     self.pc.show_all_pizzas()
-                    pizza_name = input("Selecione a pizza que deseja apagar")
+                    pizza_name = input("Selecione a pizza que deseja apagar:\n")
                     
                     self.pc.delete_pizza(pizza_name)
+                    input("Pressione enter para continuar...")
                 elif op == "3": # Editar Pizza
+                    input("Pressione enter para continuar...")
                     pass
                 elif op == "4": # Listar todas as Pizzas
                     self.pc.show_all_pizzas()
+                    input("Pressione enter para continuar...")
                 elif op == "5": # Busca os ingredientes da Pizza"
-                    pass
+                    self.pc.show_all_pizzas()
+
+                    pizza_name = input("Selecione a pizza para ver os ingredientes:\n")
+
+                    self.pc.show_pizza_ingredients(pizza_name)
+                    input("Pressione enter para continuar...")
                 elif op == "0": # Voltar
-                    break
+                    pass
             elif op == "3": # Listar Pizzas por categoria
                 self.pc.show_all_categories()
                 
                 self.pc.show_pizzas_from_category(input("Insira o nome da categoria:\n"))
+                input("Pressione enter para continuar...")
             elif op == "4": # Comprar pizzas
                 pizza_list = []
+                pizza_array = []
+                
                 while True:
                     self.pc.show_all_pizzas()
                     op = input("Digite o nome da pizza ou 0 para concluir a compra:\n")
@@ -109,10 +126,26 @@ class Menu:
                     print("Carrinho de compras")
                     print(50 * "-")
 
-                    total = 0
-
+                    total_parcial = 0
                     for pizza in pizza_list:
                         print("{}: R$ {}".format(pizza["name"], pizza["price"]))
-                        total += pizza["price"]
-                    print(total)
+                        total_parcial += pizza["price"]
+                    print(50 * "-")
+                    print("TOTAL PARCIAL DO CARRINHO: R$ {:.2f}".format(total_parcial))
+                    print(50 * "-")
+
+                for pizza in pizza_list:
+                    pizza_array.append(pizza["name"])
+
+                total_bd = self.pc.calculate_total(pizza_array)
+
+                for pizza in pizza_list:
+                        print("{}: R$ {}".format(pizza["name"], pizza["price"]))
+                        total_parcial += pizza["price"]
                 print(50 * "-")
+                print("TOTAL FINAL DO CARRINHO: R$ {:.2f}".format(total_bd))
+                print(50 * "-")
+
+                input("Pressione enter para continuar...")
+            elif op == "0": # Exit program
+                break

@@ -5,7 +5,7 @@ from view.menu import Menu
 import sys
 
 conf = {
-        "host": "localhost",
+        "host": "DMAX101D",
         "port": 7689,
         "user": "neo4j",
         "password": "toor"
