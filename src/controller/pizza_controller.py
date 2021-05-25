@@ -102,7 +102,7 @@ class PizzaController:
         self.db_engine(query)
 
     def create_new_pizza(self, name, price, category, ingredients):
-        query = "MERGE (p:Pizza{name: '" + name + "', price: '" + price + "'})"
+        query = "MERGE (p:Pizza{name: '" + name + "', price: " + price + "})"
 
         self.db_engine(query)
 
@@ -146,3 +146,9 @@ class PizzaController:
         query = "MATCH (p:Pizza) WHERE p.name IN {} RETURN SUM(p.price)".format(pizzas)
 
         return self.db_engine(query)
+
+    def edit_pizza_price(self, name, price):
+        query = "MATCH (p:Pizza{name: '" + name + "'}) SET p.price = " + price
+
+        self.db_engine(query)
+        

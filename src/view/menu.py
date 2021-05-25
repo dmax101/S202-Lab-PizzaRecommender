@@ -57,7 +57,7 @@ class Menu:
                 print(50 * "-")
                 print("1 - Adicionar nova Pizza")
                 print("2 - Apagar Pizza")
-                print("3 - Editar Pizza")
+                print("3 - Editar Preço Pizza")
                 print("4 - Listar todas as Pizza")
                 print("5 - Busca os ingredientes da Pizza")
                 print("0 - Voltar")
@@ -89,7 +89,12 @@ class Menu:
                     
                     self.pc.delete_pizza(pizza_name)
                     input("Pressione enter para continuar...")
-                elif op == "3": # Editar Pizza
+                elif op == "3": # Editar preço da Pizza
+                    self.pc.show_all_pizzas()
+                    pizza_name = input("Selecione a pizza que deseja editar:\n")
+                    new_price = input("Digite o novo valor:\n")
+
+                    self.pc.edit_pizza_price(pizza_name, new_price)
                     input("Pressione enter para continuar...")
                     pass
                 elif op == "4": # Listar todas as Pizzas
